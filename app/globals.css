@@ -1,26 +1,426 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #050304;
+  --black-soft: #090506;
+  --surface: #0d0708;
+  --surface-2: #11090b;
+
+  --white: #f7f2f3;
+  --muted: #a79a9d;
+  --dim: #665b5e;
+
+  --red: #ff5363;
+  --red-bright: #ff6f7d;
+  --red-light: #ff9ca5;
+  --red-dark: #701522;
+
+  --line: rgba(255, 83, 99, 0.16);
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "DM Sans", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background: var(--black);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(
+      ellipse at 78% 7%,
+      rgba(255, 42, 63, 0.09),
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse at 8% 65%,
+      rgba(255, 30, 50, 0.045),
+      transparent 30%
+    ),
+    var(--black);
+
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+
+  opacity: 0.018;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.7'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--red);
+  color: #120507;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 1px solid var(--red);
+  outline-offset: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 83, 99, 0.35);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 83, 99, 0.65);
+}
+
+/* --------------------------------------------------
+   Shared
+-------------------------------------------------- */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.section-line {
+  border-top: 1px solid rgba(255, 83, 99, 0.12);
+}
+
+.eyebrow {
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 111, 125, 0.75);
+}
+
+.section-number {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: rgba(255, 83, 99, 0.75);
+  letter-spacing: 0.15em;
+}
+
+/* --------------------------------------------------
+   Buttons
+-------------------------------------------------- */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    #ff6675,
+    #ff4557
+  );
+
+  padding: 12px 21px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #180407;
+
+  box-shadow:
+    0 0 25px rgba(255, 55, 75, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 0 35px rgba(255, 55, 75, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border: 1px solid rgba(255, 83, 99, 0.65);
+  border-radius: 999px;
+
+  padding: 12px 23px;
+
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+
+  background: rgba(255, 255, 255, 0.008);
+
+  transition:
+    background 300ms ease,
+    border-color 300ms ease,
+    transform 300ms ease;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 83, 99, 0.08);
+  border-color: var(--red);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------
+   Hero atmosphere
+-------------------------------------------------- */
+
+.hero-shell {
+  position: relative;
+  min-height: 760px;
+  height: 100svh;
+  max-height: 940px;
+  overflow: hidden;
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 72% 40%,
+      transparent 0%,
+      rgba(0, 0, 0, 0.05) 45%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+}
+
+.hero-red-cloud {
+  position: absolute;
+  right: 3%;
+  top: -18%;
+  width: 55vw;
+  height: 65vw;
+  max-width: 900px;
+  max-height: 900px;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255, 55, 75, 0.14),
+      rgba(255, 25, 45, 0.045) 35%,
+      transparent 68%
+    );
+
+  filter: blur(30px);
+}
+
+/* --------------------------------------------------
+   Planet horizon
+-------------------------------------------------- */
+
+.planet-horizon {
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  bottom: -22%;
+
+  height: 48%;
+
+  border-radius: 50% 50% 0 0 / 25% 25% 0 0;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(255, 88, 100, 0.28),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #16080b 0%,
+      #090405 48%,
+      #030203 100%
+    );
+
+  border-top: 1px solid rgba(255, 99, 112, 0.65);
+
+  box-shadow:
+    0 -20px 70px rgba(255, 35, 55, 0.1),
+    inset 0 20px 50px rgba(255, 45, 60, 0.035);
+
+  transform: rotate(-1deg);
+}
+
+.planet-ridge {
+  position: absolute;
+  left: 45%;
+  bottom: 4%;
+  width: 55%;
+  height: 27%;
+
+  opacity: 0.9;
+
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 8%,
+      rgba(28, 9, 12, 0.95) 8% 18%,
+      transparent 18% 22%,
+      rgba(18, 6, 9, 0.98) 22% 36%,
+      transparent 36% 40%,
+      rgba(24, 7, 10, 0.98) 40% 58%,
+      transparent 58% 62%,
+      rgba(12, 5, 7, 0.99) 62%
+    );
+
+  clip-path: polygon(
+    0 100%,
+    5% 70%,
+    10% 82%,
+    17% 52%,
+    24% 76%,
+    32% 35%,
+    39% 62%,
+    48% 22%,
+    56% 58%,
+    65% 31%,
+    73% 70%,
+    80% 45%,
+    89% 64%,
+    100% 25%,
+    100% 100%
+  );
+
+  filter: drop-shadow(
+    0 -4px 12px rgba(255, 58, 73, 0.18)
+  );
+}
+
+/* --------------------------------------------------
+   Atmospheric circles
+-------------------------------------------------- */
+
+.planet-disc {
+  position: absolute;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 38% 34%,
+      rgba(255, 96, 106, 0.2),
+      rgba(82, 13, 21, 0.65) 45%,
+      #090304 72%
+    );
+
+  box-shadow:
+    inset -30px -30px 80px rgba(0, 0, 0, 0.9),
+    0 0 50px rgba(255, 37, 55, 0.05);
+
+  opacity: 0.9;
+}
+
+.planet-disc-large {
+  width: 620px;
+  height: 620px;
+  left: -300px;
+  bottom: -420px;
+}
+
+.planet-disc-right {
+  width: 380px;
+  height: 380px;
+  right: -170px;
+  bottom: -180px;
+}
+
+/* --------------------------------------------------
+   Mobile
+-------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .hero-shell {
+    height: auto;
+    min-height: 900px;
+    max-height: none;
+  }
+
+  .hero-red-cloud {
+    right: -30%;
+    top: 10%;
+    width: 110vw;
+    height: 110vw;
+  }
+
+  .planet-horizon {
+    bottom: -8%;
+    height: 28%;
+  }
+
+  .planet-ridge {
+    left: 20%;
+    width: 85%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-shell {
+    min-height: 980px;
+  }
+
+  .hero-red-cloud {
+    right: -35%;
+    top: 22%;
+    width: 130vw;
+    height: 130vw;
+  }
+
+  .planet-horizon {
+    bottom: -4%;
+    height: 22%;
+  }
+
+  .planet-disc-large {
+    width: 420px;
+    height: 420px;
+    left: -250px;
+    bottom: -300px;
+  }
+
+  .planet-disc-right {
+    width: 260px;
+    height: 260px;
+    right: -140px;
+    bottom: -100px;
+  }
 }
